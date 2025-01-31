@@ -34,6 +34,7 @@ def insert_player_stat_instance(data):
     stats = json.dumps(data["stats"])  # Convert stats to JSON string
     unique_id = f"{player_id}_{date}"  # Create the unique_id
     game_type = data["game_type"]
+    team_id = data["team_id"]
     
     conn = connect_to_db()
     
@@ -46,15 +47,15 @@ def insert_player_stat_instance(data):
                 return
         with conn.cursor() as cur:
             query = """
-                INSERT INTO player_stat_firsts (_id, player_id, player_name, date, game_id, stats, game_type)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                INSERT INTO player_stat_firsts (_id, player_id, player_name, date, game_id, stats, game_type, team_id)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                 ON CONFLICT (_id)
                 DO UPDATE SET
                     player_name = EXCLUDED.player_name,
                     game_id = EXCLUDED.game_id,
                     stats = EXCLUDED.stats;
             """
-            cur.execute(query, (unique_id, player_id, player_name, date, game_id, stats, game_type))
+            cur.execute(query, (unique_id, player_id, player_name, date, game_id, stats, game_type, team_id))
             conn.commit()
             print("Record inserted/updated successfully.")
 

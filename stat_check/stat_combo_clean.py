@@ -204,15 +204,19 @@ def clean_combo(data):
     game_type = data['game_type']
     game_type_lower = game_type.lower()
     if player_home_away or overtime or player_win_lose:
+        player_home_away = player_home_away.replace("'", "")
         if player_home_away and player_home_away == 'home':
             home_away = 'home'
-        elif player_home_away and player_home_away == 'road':
+        elif player_home_away and player_home_away == 'away':
+            
             home_away = 'road'
         else: home_away = ''
         
-        overtime = get_stat_value(stats, 'overtime')
-        if overtime == 'REG': overtime = ''
-        elif overtime != 'REG': overtime = overtime.replace("'", "")
+        if overtime:
+            if overtime == 'REG': 
+                overtime = ''
+            elif overtime != 'REG': 
+                overtime = overtime.replace("'", "")
         
         if player_win_lose: # update for when it's a win/loss but no double/triple double
             win_lose = "win" if player_win_lose == "win" else "loss"

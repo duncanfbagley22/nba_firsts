@@ -87,7 +87,7 @@ STAT_CONFIG = [
     {"stat": "opp_team_id", "relevance": 2, "type": "unique", "rounding": "false", "rounding_value": 1, "allow_zeros": "false", "only_true": "false", "mutually_exclusive": []}
 ]
 
-def process_stats(name, id, data, game_type, cur):
+def process_stats(name, id, data, game_type, cur, team_id):
 
     # Helper function to parse a stat string
     def parse_stat(stat):
@@ -131,7 +131,8 @@ def process_stats(name, id, data, game_type, cur):
         "date": query_date,
         "game_id": query_game_id,
         "stats": [{"stat_name": stat[0], "operator": stat[1], "value": stat[2]} for stat in parsed_stats],
-        "game_type": game_type
+        "game_type": game_type,
+        "team_id": team_id
     }
 
 # Weighted random selection based on relevance
@@ -274,6 +275,7 @@ def evaluate_staging_data():
                 for record in staging_data:
                     player_name = record["first_name"] + " " + record["last_name"]
                     player_id = record["player_id"]
+                    team_id = record["team_id"]
                     #print(f"Evaluating player: {player_name} (ID: {player_id})")
                     being_checked = [item["stat"] for item in stats_to_check]
                     #print(being_checked)
@@ -349,7 +351,7 @@ def evaluate_staging_data():
                                 reverse=True
                             )
 
-                            updated_result = process_stats({player_name},{player_id}, remove_conditions_iteratively(player_id, cur, conditions, game_type), game_type, cur)
+                            updated_result = process_stats({player_name},{player_id}, remove_conditions_iteratively(player_id, cur, conditions, game_type), game_type, cur, team_id)
                             print(updated_result)
 
                             return updated_result # Exit the script on the first unique combination
